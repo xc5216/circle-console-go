@@ -14,3 +14,7 @@ type walletsCreateRequest struct {
 type walletsData struct {
 	Wallets []model.Wallet `json:"wallets"`
 }
+
+type publicKeyData struct {
+	PublicKey string `json:"publicKey"`
+}

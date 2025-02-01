@@ -17,7 +17,7 @@ func NewGeneralCtrl(apiKey string) *generalCtrl {
 
 // GetPublicKey will get public key from circle server
 func (ctrl generalCtrl) GetPublicKey(apiKey string) (string, error) {
-	result := model.PublicKeyData{}
+	result := publicKeyData{}
 	_, err := util.SendRequest[any, any](util.EndPointGetPublicKey, apiKey, "", nil, nil, &result)
 	if err != nil {
 		return "", err

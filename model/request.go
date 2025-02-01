@@ -2,16 +2,6 @@ package model
 
 import "fmt"
 
-type RequestInfo struct {
-	IdempotencyKey string
-	RequestID      string
-}
-
-type BasicResponse struct {
-	Code    int    `json:"code"`
-	Message string `json:"message"`
-}
-
 type CircleAPIError struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
