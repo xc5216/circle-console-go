@@ -4,8 +4,10 @@ import (
 	"encoding/hex"
 	"fmt"
 	"os"
+	"time"
 
-	"github.com/xc5216/circle-console-go/devwallet"
+	"github.com/xc5216/circle-console-go/api"
+	"github.com/xc5216/circle-console-go/model"
 )
 
 func main() {
@@ -16,19 +18,38 @@ func main() {
 		panic(err)
 	}
 
-	controller, err := devwallet.New(apiKey, entitySecret)
+	ctrl, err := api.NewDevWalletCtrl(apiKey, entitySecret)
 	if err != nil {
 		panic(err)
 	}
-	_, walletSet, err := controller.CreateWalletSet("test wallet")
+	name := fmt.Sprintf("walletSet-%d", time.Now().Unix())
+	requestID, walletSet, err := ctrl.CreateWalletSet(name, "")
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println("CreateWalletSet Request ID: ", requestID)
 	fmt.Println("Wallet set: ", walletSet)
 
-	_, wallets, err := controller.CreateWallets(walletSet.ID, []string{"ETH-SEPOLIA"}, 1)
+	requestID, wallets, err := ctrl.CreateWallets(model.CreateWalletRequest{
+		WalletSetID: walletSet.ID.String(),
+		Blockchains: []string{"MATIC-AMOY"},
+		Count:       1,
+		MetaData:    nil,
+		AccountType: model.WalletTypeExternallyOwnedAccount,
+	}, "")
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println("CreateWallets Request ID: ", requestID)
 	fmt.Println("Wallets: ", wallets)
+
+	requestID, err = ctrl.RequestTestnetToken(model.GetTestnetTokenRequest{
+		Blockchain: "MATIC-AMOY",
+		Address:    wallets[0].Address,
+		Native:     true,
+	}, "")
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("RequestTestnetToken Request ID: ", requestID)
 }

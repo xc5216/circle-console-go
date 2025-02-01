@@ -38,17 +38,20 @@ func (c *controller) getEntitySecretCipherText() string {
 	return base64.StdEncoding.EncodeToString(entitySecretCipherText)
 }
 
-func (c *controller) CreateWalletSet(name string) (idempotencyKey string, walletSet model.WalletSet, err error) {
-	url := fmt.Sprintf("%s/developer/walletSets", setting.GetServerURL())
+func (c *controller) CreateWalletSet(name string) (info *model.RequestInfo, walletSet model.WalletSet, err error) {
+	url := fmt.Sprintf("%s/w3s/developer/walletSets", setting.GetServerURL())
 	id, err := uuid.NewV4()
 	if err != nil {
 		return
 	}
 
-	idempotencyKey = id.String()
+	info = &model.RequestInfo{
+		IdempotencyKey: id.String(),
+		RequestID:      util.GenerateRequestID(),
+	}
 	request := walletSetCreateRequest{
 		Name:                   name,
-		IdempotencyKey:         idempotencyKey,
+		IdempotencyKey:         info.IdempotencyKey,
 		EntitySecretCipherText: c.getEntitySecretCipherText(),
 	}
 
@@ -56,6 +59,7 @@ func (c *controller) CreateWalletSet(name string) (idempotencyKey string, wallet
 	if err != nil {
 		return
 	}
+	util.SetRequestID(req, info.RequestID)
 
 	response, err := util.DoRequestAndParseResultAs[walletSetCreateResponse](req)
 	if err != nil {
@@ -67,7 +71,7 @@ func (c *controller) CreateWalletSet(name string) (idempotencyKey string, wallet
 }
 
 func (c *controller) GetDevWalletSets() ([]model.WalletSet, error) {
-	url := fmt.Sprintf("%s/walletSets", setting.GetServerURL())
+	url := fmt.Sprintf("%s/w3s/walletSets", setting.GetServerURL())
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -84,30 +88,4 @@ func (c *controller) GetDevWalletSets() ([]model.WalletSet, error) {
 		return walletSet.CustodyType == model.CustodyTypeDeveloper
 	})
 	return walletSets, nil
-}
-
-func (c *controller) CreateWallets(walletSetId uuid.UUID, blockchains []string, count int) (idempotencyKey string, wallets []model.Wallet, err error) {
-	url := fmt.Sprintf("%s/developer/wallets", setting.GetServerURL())
-	id, err := uuid.NewV4()
-	if err != nil {
-		return
-	}
-
-	idempotencyKey = id.String()
-	request := walletsCreateRequest{
-		IdempotencyKey:         idempotencyKey,
-		EntitySecretCipherText: c.getEntitySecretCipherText(),
-		WalletSetID:            walletSetId.String(),
-		Blockchains:            blockchains,
-		Count:                  count,
-	}
-	req, err := util.GenerateJsonPostRequest(url, request, c.apiKey)
-	if err != nil {
-		return
-	}
-	response, err := util.DoRequestAndParseResultAs[walletsCreateResponse](req)
-	if err != nil {
-		return
-	}
-	return idempotencyKey, response.Data.Wallets, nil
 }

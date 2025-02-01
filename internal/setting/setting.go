@@ -1,6 +1,6 @@
 package setting
 
-var serverUrl = "https://api.circle.com/v1/w3s"
+var serverUrl = "https://api.circle.com/v1"
 
 // GetServerURL returns the server URL
 func GetServerURL() string {
