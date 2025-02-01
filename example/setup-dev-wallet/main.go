@@ -6,18 +6,20 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/xc5216/circle-console-go/devwallet"
+	"github.com/xc5216/circle-console-go/api"
 )
 
 func main() {
 	apiKey := os.Getenv("API_KEY")
-	entitySecret := devwallet.GenerateRandomEntitySecret()
-	publicKey, err := devwallet.GetPublicKey(apiKey)
+	ctrl := api.NewGeneralCtrl(apiKey)
+
+	entitySecret := api.GenerateRandomEntitySecret()
+	publicKey, err := ctrl.GetPublicKey(apiKey)
 	if err != nil {
 		panic(err)
 	}
 	fmt.Println("Public key: ", publicKey)
-	encryptedEntitySecret, err := devwallet.EncryptEntitySecret(entitySecret, publicKey)
+	encryptedEntitySecret, err := api.EncryptEntitySecret(entitySecret, publicKey)
 	if err != nil {
 		panic(err)
 	}
