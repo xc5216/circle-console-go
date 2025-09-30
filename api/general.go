@@ -18,7 +18,7 @@ func NewGeneralCtrl(apiKey string) *generalCtrl {
 // GetPublicKey will get public key from circle server
 func (ctrl generalCtrl) GetPublicKey(apiKey string) (string, error) {
 	result := publicKeyData{}
-	_, err := util.SendRequest[any, any](util.EndPointGetPublicKey, apiKey, "", nil, nil, &result)
+	_, err := util.SendRequest[any, any](util.GetEndPointGetPublicKey(), apiKey, "", nil, nil, &result)
 	if err != nil {
 		return "", err
 	}
@@ -27,5 +27,5 @@ func (ctrl generalCtrl) GetPublicKey(apiKey string) (string, error) {
 
 // RequestTestnetToken requests testnet tokens for the specified address.
 func (ctrl generalCtrl) RequestTestnetToken(request model.GetTestnetTokenRequest, idempotencyKey string) (requestID string, err error) {
-	return util.SendRequest[any, any, any](util.EndPointFaucet, ctrl.apiKey, idempotencyKey, request, nil, nil)
+	return util.SendRequest[model.GetTestnetTokenRequest, any, any](util.GetEndPointFaucet(), ctrl.apiKey, idempotencyKey, &request, nil, nil)
 }

@@ -99,6 +99,10 @@ func buildQuery(params interface{}) string {
 		tag := field.Tag.Get("url")
 		if tag != "" {
 			value := v.Field(i).Interface()
+			// Skip nil values
+			if value == nil {
+				continue
+			}
 			queryParts = append(queryParts, fmt.Sprintf("%s=%v", tag, value))
 		}
 	}

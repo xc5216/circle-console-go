@@ -1,6 +1,8 @@
 package model
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type CircleAPIError struct {
 	Code    int    `json:"code"`
@@ -30,4 +32,18 @@ type GetTestnetTokenRequest struct {
 	Native     bool   `json:"native"`
 	USDC       bool   `json:"usdc"`
 	EURC       bool   `json:"eurc"`
+}
+
+type GetWalletTokenBalanceRequest struct {
+	IncludeAll   bool    `url:"includeAll"`
+	Name         *string `url:"name"`
+	TokenAddress *string `url:"tokenAddress"`
+	Standard     *string `url:"standard"`
+}
+
+type TransferRequest struct {
+	WalletID           string   `json:"walletId"`
+	Amounts            []string `json:"amounts"`
+	DestinationAddress string   `json:"destinationAddress"`
+	TokenID            string   `json:"tokenId"`
 }

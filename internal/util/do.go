@@ -13,30 +13,12 @@ import (
 )
 
 type EndPoint struct {
-	URL    string
-	Method string
+	URL         string
+	URLTemplate string
+	Method      string
 }
 
-var (
-	EndPointGetPublicKey = EndPoint{
-		URL:    "/w3s/config/entity/publicKey",
-		Method: http.MethodGet,
-	}
-	EndPointCreateWalletSet = EndPoint{
-		URL:    "/w3s/developer/walletSets",
-		Method: http.MethodPost,
-	}
-	EndPointCreateWallets = EndPoint{
-		URL:    "/w3s/developer/wallets",
-		Method: http.MethodPost,
-	}
-	EndPointFaucet = EndPoint{
-		URL:    "/faucet/drips",
-		Method: http.MethodPost,
-	}
-)
-
-func SendRequest[P, Q, R any](endPoint EndPoint, apiKey string, idempotencyKey string, payload P, query *Q, response *R) (requestID string, err error) {
+func SendRequest[P, Q, R any](endPoint EndPoint, apiKey string, idempotencyKey string, payload *P, query *Q, response *R) (requestID string, err error) {
 	requestID = GenerateRequestID()
 
 	queryString := ""
@@ -68,9 +50,9 @@ func SendRequest[P, Q, R any](endPoint EndPoint, apiKey string, idempotencyKey s
 	return
 }
 
-func GenerateRequest[P any](endPoint EndPoint, idempotencyKey string, requestID string, payload P) (req *http.Request, err error) {
+func GenerateRequest[P any](endPoint EndPoint, idempotencyKey string, requestID string, payload *P) (req *http.Request, err error) {
 	var body io.Reader
-	if endPoint.Method == http.MethodPost {
+	if payload != nil {
 		jsonData, err := json.Marshal(payload)
 		if err != nil {
 			return nil, err

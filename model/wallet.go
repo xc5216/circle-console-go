@@ -30,3 +30,22 @@ type Wallet struct {
 	WalletSetID uuid.UUID   `json:"walletSetId"`
 	AccountType string      `json:"accountType"`
 }
+
+type WalletTokenBalance struct {
+	Amount     string    `json:"amount"`
+	UpdateDate time.Time `json:"updateDate"`
+	Token      Token     `json:"token"`
+}
+
+type Token struct {
+	ID           uuid.UUID `json:"id"`
+	Name         string    `json:"name"`
+	Standard     string    `json:"standard"`
+	Blockchain   string    `json:"blockchain"`
+	Decimals     int       `json:"decimals"`
+	IsNative     bool      `json:"isNative"`
+	Symbol       string    `json:"symbol"`
+	TokenAddress string    `json:"tokenAddress"`
+	UpdateDate   time.Time `json:"updateDate"`
+	CreateDate   time.Time `json:"createDate"`
+}
